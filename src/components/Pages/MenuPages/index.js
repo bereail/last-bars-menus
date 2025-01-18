@@ -6,6 +6,7 @@ import { MenuContainer } from "../../Themes/MenuContainer";
 import { themes } from "../../Themes/themes";
 import API from "../../../API";
 import Button from "../../Button";
+import DeleteProduct from "../../Product/DeleteProduct";
 
 const MenuPage = () => {
   const { menuName } = useParams();
@@ -171,58 +172,70 @@ const MenuPage = () => {
                       )}
                     </h2>
                     <ul>
-                      {categoryProducts.map((product) => (
-                        <li key={product.productId}>
-                          {editingProduct === product.productId ? (
-                            <>
-                              <input
-                                type="text"
-                                value={updatedProduct.name}
-                                onChange={(e) =>
-                                  setUpdatedProduct((prev) => ({
-                                    ...prev,
-                                    name: e.target.value,
-                                  }))
-                                }
-                              />
-                              <input
-                                type="number"
-                                value={updatedProduct.price}
-                                onChange={(e) =>
-                                  setUpdatedProduct((prev) => ({
-                                    ...prev,
-                                    price: e.target.value,
-                                  }))
-                                }
-                              />
-                              <input
-                                type="text"
-                                value={updatedProduct.description}
-                                onChange={(e) =>
-                                  setUpdatedProduct((prev) => ({
-                                    ...prev,
-                                    description: e.target.value,
-                                  }))
-                                }
-                              />
-                              <button onClick={() => handleSaveProduct(product.productId)}>
-                                Guardar
-                              </button>
-                            </>
-                          ) : (
-                            <>
-                              <strong>{product.productName}</strong> - $
-                              {product.productPrice}
-                              <p>{product.productDescription}</p>
-                              <FaEdit
-                                style={{ cursor: "pointer" }}
-                                onClick={() => handleEditProduct(product)}
-                              />
-                            </>
-                          )}
-                        </li>
-                      ))}
-                    </ul>
+  {categoryProducts.map((product) => (
+    <li key={product.productId}>
+      {editingProduct === product.productId ? (
+        <>
+          <input
+            type="text"
+            value={updatedProduct.name}
+            onChange={(e) =>
+              setUpdatedProduct((prev) => ({
+                ...prev,
+                name: e.target.value,
+              }))
+            }
+          />
+          <input
+            type="number"
+            value={updatedProduct.price}
+            onChange={(e) =>
+              setUpdatedProduct((prev) => ({
+                ...prev,
+                price: e.target.value,
+              }))
+            }
+          />
+          <input
+            type="text"
+            value={updatedProduct.description}
+            onChange={(e) =>
+              setUpdatedProduct((prev) => ({
+                ...prev,
+                description: e.target.value,
+              }))
+            }
+          />
+          <button onClick={() => handleSaveProduct(product.productId)}>
+            Guardar
+          </button>
+        </>
+      ) : (
+        <>
+          <strong>{product.productName}</strong> - ${product.productPrice}
+          <p>{product.productDescription}</p>
+          <FaEdit
+            style={{ cursor: "pointer" }}
+            onClick={() => handleEditProduct(product)}
+          />
+          {/* Agregar el botón de eliminar */}
+          <DeleteProduct
+            productId={product.productId}
+            onDeleteSuccess={(deletedProductId) => {
+              setMenuDetails((prevDetails) => ({
+                ...prevDetails,
+                products: prevDetails.products.filter(
+                  (p) => p.productId !== deletedProductId
+                ),
+              }));
+            }}
+          />
+        </>
+      )}
+    </li>
+  ))}
+</ul>
+
                   </div>
                 );
               })

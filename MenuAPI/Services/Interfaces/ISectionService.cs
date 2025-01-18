@@ -8,7 +8,7 @@ namespace WebApplication1.Services.Interfaces
     {
         Task<Section> GetSectionByIdAsync(int id);
 
-        Task<List<Models.Dtos.SectionDto>> GetAllSectionAsync();
+        Task<List<SectionGetDto>> GetAllSectionAsync();
         Task<Section> CreateSectionAsync(SectionDto sectionDto);
 
         Task<Section> UpdateSectionAsync(int id, SectionDto sectionDto);

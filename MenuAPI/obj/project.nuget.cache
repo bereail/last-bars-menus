@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "xCYYo2BRyoG/uLlrjlfERiNbw/AsV/fLcZ1RBR6jgb7G39tIWihoqx0HVxpA53YLj4TWHeu7+hTsnZmw795zjw==",
+  "dgSpecHash": "wpnmNjST8an9Xcnyq/o1LMDP4l5aLbCyXgv/vqWMU+CYhhoZmYUxXP7g4OVbAt51HlSbo20B3AlD1jwgZjrKLg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Administrador\\Desktop\\Bere\\GIT\\last-bars-menus\\bars-menus\\MenuAPI\\WebApplication1.csproj",
+  "projectFilePath": "C:\\Users\\Administrador\\Desktop\\Bere\\GIT\\last-bars-menus\\MenuAPI\\WebApplication1.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Administrador\\.nuget\\packages\\azure.core\\1.35.0\\azure.core.1.35.0.nupkg.sha512",
     "C:\\Users\\Administrador\\.nuget\\packages\\azure.identity\\1.10.3\\azure.identity.1.10.3.nupkg.sha512",

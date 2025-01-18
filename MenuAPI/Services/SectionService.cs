@@ -34,12 +34,13 @@ namespace WebApplication1.Services
 
 
         // Obtener todas las secciones
-        public async Task<List<SectionDto>> GetAllSectionAsync()
+        public async Task<List<SectionGetDto>> GetAllSectionAsync()
         {
             var sections = await _context.Sections
                 .Include(s => s.Categories)
-                .Select(s => new SectionDto
+                .Select(s => new SectionGetDto
                 {
+                    Id = s.Id,
                     Name = s.Name,
                     Categories = s.Categories.Select(c => new CategoryDto
                     {

@@ -10,10 +10,10 @@ import Login from "./components/Login/Login";
 import CrudPage from "./components/Pages/CrudPage";
 import { AuthProvider } from "./components/Login/AuthContext";
 import AuthenticatedLayout from '../src/components/Login/AuthenticatedLayout';
-
+import GetAllSections from "./components/Section/GetAllSection";
 import AddComponent from "./components/CrudComponent/AddComponent";
 import DeleteComponent from "./components/CrudComponent/DeleteComponent";
-
+import CreateCategory from "./components/Category/CreateCategory";
 
 // Contenedor principal para ajustar el espacio
 const MainContent = styled.div`
@@ -33,6 +33,7 @@ function App() {
             <Route path="/" element={<HomePages />} />
             <Route path="/:menuName" element={<MenuPage />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/test" element={<CreateCategory />} />
 
             {/* Protected Routes */}
             <Route element={<AuthenticatedLayout />}>

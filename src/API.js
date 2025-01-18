@@ -89,6 +89,44 @@ const API = {
     return response;
   },
 
+
+// Create a new category
+//https://localhost:7119/Category/{sectionId}
+createCategory: async (sectionId, categoryData) => {
+  const endpoint = `${API_URL}Category/${sectionId}`;
+  
+  // Agrega un console.log aquí para ver el JSON que estás enviando
+  console.log("Datos enviados a la API:", {
+    sectionId, 
+    ...categoryData
+  });
+
+  const response = await (
+    await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        sectionId, // Enviar también el sectionId si se requiere
+        ...categoryData, // Incluir los datos de la categoría (como el nombre)
+      }),
+    })
+  ).json();
+  
+  return response;
+},
+
+
+// Get All Section
+//https://localhost:7119/Section
+fetchSection: async () => {
+  const endpoint = `${API_URL}Section`;
+  return await (await fetch(endpoint, { method: 'GET' })).json();
+},
+
+
+
   //Editar una categoria
   //https://localhost:7119/Category/1
    updateCategoryItem : async (categoryId, updatedData) => {
@@ -111,9 +149,9 @@ const API = {
 
 
   //Editar un producto
-  ////https://localhost:7119//with-menus/{menuId}
-  updateProductItem: async (menuId, updatedData) => {
-    const endpoint = `${API_URL}Product/${menuId}`;
+  //https://localhost:7119/Product/{productId}
+  updateProductItem: async (productId, updatedData) => {
+    const endpoint = `${API_URL}Product/${productId}`;
     try {
       const response = await fetch(endpoint, {
         method: "PUT",
@@ -136,6 +174,30 @@ const API = {
   },
   
 
+
+    //https://localhost:7119/Product/{productId}
+  // Example: Delete Product
+
+  deleteProductItem: async (productId) => {
+    try {
+      const response = await fetch(`${API_URL}Product/${productId}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error HTTP: ${response.status}`);
+      }
+
+      // Verifica si la respuesta contiene un cuerpo antes de intentar convertirla a JSON
+      const responseBody = await response.text(); // Primero leer como texto
+
+      // Si la respuesta tiene contenido, parseamos como JSON
+      return responseBody ? JSON.parse(responseBody) : { success: true }; // Asumimos éxito si no hay cuerpo
+    } catch (error) {
+      console.error("Error al eliminar el producto:", error);
+      throw error;
+    }
+  },
 
   //https://localhost:7119//with-menus/{menuId}
   // Example: Delete a menu item
