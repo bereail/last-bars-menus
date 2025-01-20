@@ -17,9 +17,5 @@ public partial class Product
 
     public int CategoryId { get; set; }
 
-    public int MenuId { get; set; }
-
     public virtual Category Category { get; set; }
-
-    public virtual Menu Menu { get; set; }
 }

@@ -11,5 +11,9 @@ public partial class Section
 
     public string Name { get; set; }
 
+    public int MenuId { get; set; }
+
     public virtual ICollection<Category> Categories { get; set; } = new List<Category>();
+
+    public virtual Menu Menu { get; set; }
 }

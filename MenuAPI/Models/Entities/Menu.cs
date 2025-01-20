@@ -15,5 +15,5 @@ public partial class Menu
 
     public virtual Bar Bar { get; set; }
 
-    public virtual ICollection<Product> Products { get; set; } = new List<Product>();
+    public virtual ICollection<Section> Sections { get; set; } = new List<Section>();
 }

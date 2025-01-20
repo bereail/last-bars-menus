@@ -29,7 +29,7 @@ public partial class RositaMenuDBContext : DbContext
     {
         modelBuilder.Entity<Bar>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Bar__3214EC07CF9A2121");
+            entity.HasKey(e => e.Id).HasName("PK__Bar__3214EC0797E55F1D");
 
             entity.ToTable("Bar");
 
@@ -39,12 +39,12 @@ public partial class RositaMenuDBContext : DbContext
 
             entity.HasOne(d => d.User).WithMany(p => p.Bars)
                 .HasForeignKey(d => d.UserId)
-                .HasConstraintName("FK__Bar__UserId__5165187F");
+                .HasConstraintName("FK__Bar__UserId__4F7CD00D");
         });
 
         modelBuilder.Entity<Category>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Category__3214EC07229ED2B6");
+            entity.HasKey(e => e.Id).HasName("PK__Category__3214EC0751A32726");
 
             entity.ToTable("Category");
 
@@ -54,13 +54,12 @@ public partial class RositaMenuDBContext : DbContext
 
             entity.HasOne(d => d.Section).WithMany(p => p.Categories)
                 .HasForeignKey(d => d.SectionId)
-                .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("FK__Category__Sectio__571DF1D5");
+                .HasConstraintName("FK__Category__Sectio__5812160E");
         });
 
         modelBuilder.Entity<Menu>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Menu__3214EC0782B4D0C9");
+            entity.HasKey(e => e.Id).HasName("PK__Menu__3214EC0736201B0B");
 
             entity.ToTable("Menu");
 
@@ -70,12 +69,12 @@ public partial class RositaMenuDBContext : DbContext
 
             entity.HasOne(d => d.Bar).WithMany(p => p.Menus)
                 .HasForeignKey(d => d.BarId)
-                .HasConstraintName("FK__Menu__BarId__5441852A");
+                .HasConstraintName("FK__Menu__BarId__52593CB8");
         });
 
         modelBuilder.Entity<Product>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Product__3214EC0795356E33");
+            entity.HasKey(e => e.Id).HasName("PK__Product__3214EC07F61D7F37");
 
             entity.ToTable("Product");
 
@@ -87,32 +86,31 @@ public partial class RositaMenuDBContext : DbContext
 
             entity.HasOne(d => d.Category).WithMany(p => p.Products)
                 .HasForeignKey(d => d.CategoryId)
-                .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("FK__Product__Categor__5AEE82B9");
-
-            entity.HasOne(d => d.Menu).WithMany(p => p.Products)
-                .HasForeignKey(d => d.MenuId)
-                .HasConstraintName("FK__Product__MenuId__5BE2A6F2");
+                .HasConstraintName("FK__Product__Categor__5BE2A6F2");
         });
 
         modelBuilder.Entity<Section>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Section__3214EC07577FBA83");
+            entity.HasKey(e => e.Id).HasName("PK__Section__3214EC0753AAC470");
 
             entity.ToTable("Section");
 
             entity.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(100);
+
+            entity.HasOne(d => d.Menu).WithMany(p => p.Sections)
+                .HasForeignKey(d => d.MenuId)
+                .HasConstraintName("FK__Section__MenuId__5535A963");
         });
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Users__3214EC075AC8A4BE");
+            entity.HasKey(e => e.Id).HasName("PK__Users__3214EC076513E0B3");
 
-            entity.HasIndex(e => e.Username, "UQ__Users__536C85E4E3CED6C4").IsUnique();
+            entity.HasIndex(e => e.Username, "UQ__Users__536C85E4F6B711E5").IsUnique();
 
-            entity.HasIndex(e => e.Email, "UQ__Users__A9D105347499746A").IsUnique();
+            entity.HasIndex(e => e.Email, "UQ__Users__A9D105340FDF6C5A").IsUnique();
 
             entity.Property(e => e.Email)
                 .IsRequired()

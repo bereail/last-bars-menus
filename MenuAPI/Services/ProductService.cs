@@ -26,7 +26,6 @@ namespace WebApplication1.Services
                     Description = p.Description,
                     Price = p.Price,
                     CategoryId = p.CategoryId,
-                    MenuId = p.MenuId
                 })
                 .ToListAsync();
         }
@@ -50,7 +49,6 @@ namespace WebApplication1.Services
                 Description = product.Description,
                 Price = product.Price,
                 CategoryId = product.CategoryId,
-                MenuId = product.MenuId
             };
         }
 
@@ -63,7 +61,6 @@ namespace WebApplication1.Services
                 Description = productDto.Description,
                 Price = productDto.Price,
                 CategoryId = productDto.CategoryId,
-                MenuId = productDto.MenuId
             };
 
             _context.Products.Add(product);

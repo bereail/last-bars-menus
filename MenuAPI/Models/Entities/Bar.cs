@@ -2,7 +2,6 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
 
 namespace WebApplication1.Models;
 
@@ -14,8 +13,7 @@ public partial class Bar
 
     public int UserId { get; set; }
 
-    [JsonIgnore]
     public virtual ICollection<Menu> Menus { get; set; } = new List<Menu>();
-    [JsonIgnore]
+
     public virtual User User { get; set; }
 }

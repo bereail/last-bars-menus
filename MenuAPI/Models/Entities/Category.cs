@@ -11,7 +11,7 @@ public partial class Category
 
     public string Name { get; set; }
 
-    public int? SectionId { get; set; }
+    public int SectionId { get; set; }
 
     public virtual ICollection<Product> Products { get; set; } = new List<Product>();
 
