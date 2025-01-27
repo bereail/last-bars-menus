@@ -15,14 +15,39 @@ namespace WebApplication1.Services
             _context = context;
         }
 
-     /*   public async Task<Menu> GetMenuWithDetailsByIdAsync(int id)
+        public async Task<MenuDetailsDto> GetMenuWithDetailsByIdAsync(int id)
         {
-            return await _context.Menus
-                .Include(m => m.Bar)                // Incluir productos
-                .ThenInclude(p => p.Menus)           // Incluir categoría
+            var menu = await _context.Menus
+                .Include(m => m.Sections)
+                    .ThenInclude(s => s.Categories)
+                        .ThenInclude(c => c.Products)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (menu == null)
+            {
+                return null; // Maneja el caso de un menú inexistente
+            }
+
+            return new MenuDetailsDto
+            {
+                Id = menu.Id,
+                Name = menu.Name,
+                Sections = menu.Sections.Select(section => new SectionMenuDetailsDto
+                {
+                    Id = section.Id,
+                    Name = section.Name,
+                    Products = section.Categories.SelectMany(c => c.Products).Select(product => new ProductMenuDetailsDto
+                    {
+                        Id = product.Id,
+                        Name = product.Name,
+                        Description = product.Description,
+                        Price = product.Price,
+                        CategoryName = section.Categories.FirstOrDefault(cat => cat.Products.Contains(product))?.Name // Get the category name
+                    }).ToList()
+                }).ToList()
+            };
         }
-     */
+
         public async Task<List<MenuDto>> GetAllMenuAsync()
         {
             var menus = await _context.Menus

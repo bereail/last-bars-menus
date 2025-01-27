@@ -11,7 +11,8 @@ namespace WebApplication1.Services.Interfaces
         Task<Menu> GetMenuByIdAsync(int id);
         Task<List<MenuDto>> GetAllMenuAsync();
 
-       /* Task<Menu> GetMenuWithDetailsByIdAsync(int id);*/
+        Task<MenuDetailsDto> GetMenuWithDetailsByIdAsync(int id);
+
         Task<MenuDto> CreateMenuAsync(MenuDto menuDto, int barId);
 
     }

@@ -57,21 +57,23 @@ const API = {
   },
 
 
-   ///https://localhost:7119/Menu/{menuId}/details
+   ///https://localhost:7119/Menu/menu-details/{menuId}
   // Example: Fetch a specific menu item by ID
   fetchMenuItem: async (menuId) => {
-    const endpoint = `${API_URL}Menu/${menuId}/details`;
-    const data = await fetch(endpoint).then((res) => res.json());
-    console.log("Datos recibidos desde la API:", data); // <-- Aquí
-    console.log("Endpoint que se está llamando:", endpoint); // <-- Aquí
+    const endpoint = `${API_URL}Menu/menu-details/${menuId}`;
+    console.log("Endpoint que se está llamando:", endpoint);
+  
     try {
-      const response = await fetch(endpoint, { method: 'GET' });
+      const response = await fetch(endpoint, { method: "GET" });
       if (!response.ok) {
-        throw new Error("Error fetching menu details");
+        throw new Error(`Error fetching menu details: ${response.status}`);
       }
-      return await response.json();
+  
+      const data = await response.json();
+      console.log("Datos recibidos desde la APIs:", data);
+      return data;
     } catch (error) {
-      console.error("API Error:", error);
+      console.error("API Error:", error.message);
       throw error;
     }
   },

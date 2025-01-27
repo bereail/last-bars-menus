@@ -28,55 +28,23 @@ namespace WebApplication1.Controllers
             return Ok(menus);
         }
 
+        [HttpGet("menu-details/{id}")]
+        public async Task<IActionResult> GetMenuWithDetails(int id)
+        {
+            var menuDetails = await _menuServices.GetMenuWithDetailsByIdAsync(id);
 
-        /*[HttpGet("{id}/details")]
-         public async Task<IActionResult> GetMenuDetails(int id)
-         {
-             try
-             {
+            if (menuDetails == null)
+            {
+                return NotFound(new { Message = "Menu not found" });
+            }
 
-                 var menu = await _menuServices.GetMenuWithDetailsByIdAsync(id);
-
-                 if (menu == null)
-                 {
-                     return NotFound(new { message = "Menu not found" });
-                 }
-
-
-                 var menuDetails = new
-                 {
-                     MenuId = menu.Id,
-                     MenuName = menu.Name,
-                     Products = menu.Products.Select(product => new
-                     {
-                         ProductId = product.Id,
-                         ProductName = product.Name,
-                         ProductPrice = product.Price,
-                         ProductDescription = product.Description,
-                         Category = new
-                         {
-                             CategoryId = product.Category.Id,
-                             CategoryName = product.Category.Name,
-                             Section = new
-                             {
-                                 SectionId = product.Category.Section.Id,
-                                 SectionName = product.Category.Section.Name
-                             }
-                         }
-                     })
-                 };
-
-                 return Ok(menuDetails);
-             }
-             catch (KeyNotFoundException ex)
-             {
-                 return NotFound(new { message = ex.Message });
-             }
-         }*/
+            return Ok(menuDetails);
+        }
+    
 
 
-        // Obtener un menu por ID
-        [HttpGet("menu-get/{id}")]
+    // Obtener un menu por ID
+    [HttpGet("menu-get/{id}")]
         public async Task<IActionResult> GetMenuById(int id)
         {
             try

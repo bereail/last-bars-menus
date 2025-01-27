@@ -1,4 +1,4 @@
-import { FaEdit } from "react-icons/fa"; // Importa un ícono para la edición
+import { FaEdit } from "react-icons/fa"; // Ícono para la edición
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
@@ -8,16 +8,22 @@ import API from "../../../API";
 import Button from "../../Button";
 import DeleteProduct from "../../Product/DeleteProduct";
 
+
+//endpoint al que se llma    ///https://localhost:7119/Menu/menu-details/{menuId}
+  // Example: Fetch a specific menu item by ID
+
+  
 const MenuPage = () => {
   const { menuName } = useParams();
   const theme = themes[menuName] || themes.default;
   const [menuDetails, setMenuDetails] = useState(null);
   const [selectedSection, setSelectedSection] = useState(null);
-  const [editingCategory, setEditingCategory] = useState(null); // Estado para manejar la edición
-  const [newCategoryName, setNewCategoryName] = useState(""); // Nuevo nombre de la categoría
-  const [editingProduct, setEditingProduct] = useState(null); // Estado para manejar la edición de productos
-  const [updatedProduct, setUpdatedProduct] = useState({}); // Nuevo estado del producto
+  const [editingCategory, setEditingCategory] = useState(null);
+  const [newCategoryName, setNewCategoryName] = useState("");
+  const [editingProduct, setEditingProduct] = useState(null);
+  const [updatedProduct, setUpdatedProduct] = useState({});
   const menuId = localStorage.getItem("selectedMenuId");
+
 
   useEffect(() => {
     document.title = menuName;
@@ -38,27 +44,25 @@ const MenuPage = () => {
     fetchMenuDetails();
   }, [menuName, menuId]);
 
-  const handleUpdateCategory = async (categoryId, updatedData) => {
-    console.log("Updating category:", categoryId, updatedData); // Debug log
+  const handleUpdateCategory = async (categoryName, updatedData) => {
     try {
-      const updatedCategory = await API.updateCategoryItem(categoryId, updatedData);
-      console.log("Updated category response:", updatedCategory); // Debug log
-  
+      // Aquí puedes agregar lógica para actualizar el nombre de la categoría (si es necesario en tu backend)
       setMenuDetails((prevDetails) => ({
         ...prevDetails,
-        products: prevDetails.products.map((product) =>
-          product.category.categoryId === categoryId
-            ? {
-                ...product,
-                category: { ...product.category, categoryName: updatedCategory.name },
-              }
-            : product
-        ),
+        sections: prevDetails.sections.map((section) => ({
+          ...section,
+          products: section.products.map((product) =>
+            product.categoryName === categoryName
+              ? { ...product, categoryName: updatedData.name }
+              : product
+          ),
+        })),
       }));
     } catch (error) {
-      console.error("Error updating category:", error.message);
+      console.error("Error updating category:", error);
     }
   };
+  
 
   const handleEditClick = (categoryId, currentName) => {
     setEditingCategory(categoryId);
@@ -73,7 +77,6 @@ const MenuPage = () => {
       console.error("Error saving category:", error);
     }
   };
-
 
   const handleEditProduct = (product) => {
     setEditingProduct(product.productId);
@@ -96,13 +99,16 @@ const MenuPage = () => {
 
       setMenuDetails((prevDetails) => ({
         ...prevDetails,
-        products: prevDetails.products.map((product) =>
-          product.productId === productId
-            ? { ...product, ...updatedProductData } // Actualiza solo el producto modificado
-            : product
-        ),
+        sections: prevDetails.sections.map((section) => ({
+          ...section,
+          products: section.products.map((product) =>
+            product.id === productId
+              ? { ...product, ...updatedProductData }
+              : product
+          ),
+        })),
       }));
-      
+
       setEditingProduct(null);
     } catch (error) {
       console.error("Error saving product:", error);
@@ -111,20 +117,22 @@ const MenuPage = () => {
 
   if (!menuDetails) return <div>Cargando...</div>;
 
-  const filteredProducts = selectedSection
-    ? menuDetails.products.filter(
-        (product) => product.category.section.sectionId === selectedSection
-      )
-    : [];
+  const groupedProducts = selectedSection
+  ? menuDetails.sections
+      .filter((section) => section.id === selectedSection)
+      .flatMap((section) => section.products)
+      .reduce((acc, product) => {
+        const categoryName = product.categoryName || "Sin categoria";  // Default to "Unknown" if category is undefined
+        if (!acc[categoryName]) {
+          acc[categoryName] = [];
+        }
+        acc[categoryName].push(product);
+        console.log("Product category:", product.category);
 
-  const groupedProducts = filteredProducts.reduce((acc, product) => {
-    const categoryName = product.category.categoryName;
-    if (!acc[categoryName]) {
-      acc[categoryName] = [];
-    }
-    acc[categoryName].push(product);
-    return acc;
-  }, {});
+        return acc;
+      }, {})
+  : {};
+
 
   return (
     <ThemeProvider theme={theme}>
@@ -141,11 +149,114 @@ const MenuPage = () => {
         {selectedSection && (
           <div>
             <Button onClick={() => setSelectedSection(null)} label="Volver" />
+          {Object.keys(groupedProducts).map((categoryName) => {
+  const categoryProducts = groupedProducts[categoryName];
+
+  return (
+    <div key={categoryName}>
+      <h2>
+        {editingCategory === categoryName ? (
+          <>
+            <input
+              type="text"
+              value={newCategoryName}
+              onChange={(e) => setNewCategoryName(e.target.value)}
+            />
+            <button onClick={() => handleSaveCategory(categoryName)}>Guardar</button>
+          </>
+        ) : (
+          <>
+            {categoryName}{" "}
+            <FaEdit
+              style={{ cursor: "pointer" }}
+              onClick={() => handleEditClick(categoryName, categoryName)}
+            />
+          </>
+        )}
+      </h2>
+      <ul>
+        {categoryProducts.map((product) => (
+          <li key={product.id}>
+            {editingProduct === product.id ? (
+              <>
+                <input
+                  type="text"
+                  value={updatedProduct.name}
+                  onChange={(e) =>
+                    setUpdatedProduct((prev) => ({
+                      ...prev,
+                      name: e.target.value,
+                    }))
+                  }
+                />
+                <input
+                  type="number"
+                  value={updatedProduct.price}
+                  onChange={(e) =>
+                    setUpdatedProduct((prev) => ({
+                      ...prev,
+                      price: e.target.value,
+                    }))
+                  }
+                />
+                <input
+                  type="text"
+                  value={updatedProduct.description}
+                  onChange={(e) =>
+                    setUpdatedProduct((prev) => ({
+                      ...prev,
+                      description: e.target.value,
+                    }))
+                  }
+                />
+                <button onClick={() => handleSaveProduct(product.id)}>Guardar</button>
+              </>
+            ) : (
+              <>
+                <strong>{product.name}</strong> - ${product.price}
+                <p>{product.description}</p>
+                <FaEdit
+                  style={{ cursor: "pointer" }}
+                  onClick={() => handleEditProduct(product)}
+                />
+                <DeleteProduct
+                  productId={product.id}
+                  onDeleteSuccess={(deletedProductId) => {
+                    setMenuDetails((prevDetails) => ({
+                      ...prevDetails,
+                      sections: prevDetails.sections.map((section) => ({
+                        ...section,
+                        products: section.products.filter(
+                          (p) => p.id !== deletedProductId
+                        ),
+                      })),
+                    }));
+                  }}
+                />
+              </>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+})}
+          </div>
+        )}
+      </MenuContainer>
+    </ThemeProvider>
+  );
+};
+
+export default MenuPage;
+/*  {selectedSection && (
+          <div>
+            <Button onClick={() => setSelectedSection(null)} label="Volver" />
             {Object.keys(groupedProducts).length > 0 ? (
               Object.keys(groupedProducts).map((categoryName) => {
                 const categoryProducts = groupedProducts[categoryName];
-                const categoryId =
-                  categoryProducts[0].category.categoryId;
+                const categoryId = categoryProducts[0].category ? categoryProducts[0].category.id : "Unknown";
+
 
                 return (
                   <div key={categoryId}>
@@ -172,70 +283,71 @@ const MenuPage = () => {
                       )}
                     </h2>
                     <ul>
-  {categoryProducts.map((product) => (
-    <li key={product.productId}>
-      {editingProduct === product.productId ? (
-        <>
-          <input
-            type="text"
-            value={updatedProduct.name}
-            onChange={(e) =>
-              setUpdatedProduct((prev) => ({
-                ...prev,
-                name: e.target.value,
-              }))
-            }
-          />
-          <input
-            type="number"
-            value={updatedProduct.price}
-            onChange={(e) =>
-              setUpdatedProduct((prev) => ({
-                ...prev,
-                price: e.target.value,
-              }))
-            }
-          />
-          <input
-            type="text"
-            value={updatedProduct.description}
-            onChange={(e) =>
-              setUpdatedProduct((prev) => ({
-                ...prev,
-                description: e.target.value,
-              }))
-            }
-          />
-          <button onClick={() => handleSaveProduct(product.productId)}>
-            Guardar
-          </button>
-        </>
-      ) : (
-        <>
-          <strong>{product.productName}</strong> - ${product.productPrice}
-          <p>{product.productDescription}</p>
-          <FaEdit
-            style={{ cursor: "pointer" }}
-            onClick={() => handleEditProduct(product)}
-          />
-          {/* Agregar el botón de eliminar */}
-          <DeleteProduct
-            productId={product.productId}
-            onDeleteSuccess={(deletedProductId) => {
-              setMenuDetails((prevDetails) => ({
-                ...prevDetails,
-                products: prevDetails.products.filter(
-                  (p) => p.productId !== deletedProductId
-                ),
-              }));
-            }}
-          />
-        </>
-      )}
-    </li>
-  ))}
-</ul>
-
+                      {categoryProducts.map((product) => (
+                        <li key={product.productId}>
+                          {editingProduct === product.productId ? (
+                            <>
+                              <input
+                                type="text"
+                                value={updatedProduct.name}
+                                onChange={(e) =>
+                                  setUpdatedProduct((prev) => ({
+                                    ...prev,
+                                    name: e.target.value,
+                                  }))
+                                }
+                              />
+                              <input
+                                type="number"
+                                value={updatedProduct.price}
+                                onChange={(e) =>
+                                  setUpdatedProduct((prev) => ({
+                                    ...prev,
+                                    price: e.target.value,
+                                  }))
+                                }
+                              />
+                              <input
+                                type="text"
+                                value={updatedProduct.description}
+                                onChange={(e) =>
+                                  setUpdatedProduct((prev) => ({
+                                    ...prev,
+                                    description: e.target.value,
+                                  }))
+                                }
+                              />
+                              <button onClick={() => handleSaveProduct(product.productId)}>
+                                Guardar
+                              </button>
+                            </>
+                          ) : (
+                            <>
+                              <strong>{product.productName}</strong> - ${product.productPrice}
+                              <p>{product.productDescription}</p>
+                              <FaEdit
+                                style={{ cursor: "pointer" }}
+                                onClick={() => handleEditProduct(product)}
+                              />
+                              <DeleteProduct
+                                productId={product.productId}
+                                onDeleteSuccess={(deletedProductId) => {
+                                  setMenuDetails((prevDetails) => ({
+                                    ...prevDetails,
+                                    sections: prevDetails.sections.map((section) => ({
+                                      ...section,
+                                      products: section.products.filter(
+                                        (p) => p.productId !== deletedProductId
+                                      ),
+                                    })),
+                                  }));
+                                }}
+                              />
+                            </>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 );
               })
@@ -243,10 +355,4 @@ const MenuPage = () => {
               <p>No hay productos disponibles en esta sección.</p>
             )}
           </div>
-        )}
-      </MenuContainer>
-    </ThemeProvider>
-  );
-};
-
-export default MenuPage;
+        )}*/
